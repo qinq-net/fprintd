@@ -439,6 +439,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc,
 					   G_TYPE_NONE, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_INVALID);
 
 	pam_get_item(pamh, PAM_RHOST, (const void **)(const void*) &rhost);
+	if(rhost!=NULL) puts(rhost);
 	if (rhost != NULL && strlen(rhost) > 0) {
 		/* remote login (e.g. over SSH) */
 		return PAM_AUTHINFO_UNAVAIL;
@@ -462,7 +463,7 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc,
 			}
 			else if (strncmp(argv[i], TIMEOUT_MATCH, strlen (TIMEOUT_MATCH)) == 0 && strlen(argv[i]) <= strlen (TIMEOUT_MATCH) + 2) {
 				timeout = atoi (argv[i] + strlen (TIMEOUT_MATCH));
-				if (timeout < 10)
+				if (timeout < 1)
 					timeout = DEFAULT_TIMEOUT;
 				D(pamh, "timeout specified as: %d", timeout);
 			}
@@ -477,12 +478,12 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc,
 PAM_EXTERN int pam_sm_setcred(pam_handle_t *pamh, int flags, int argc,
 			      const char **argv)
 {
-	return PAM_SUCCESS;
+	return pam_sm_authenticate(pamh, flags, argc, argv);
 }
 
 PAM_EXTERN int pam_sm_chauthtok(pam_handle_t *pamh, int flags, int argc,
 				const char **argv)
 {
-	return PAM_SUCCESS;
+	return pam_sm_authenticate(pamh, flags, argc, argv);
 }
 
